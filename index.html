@@ -6,7 +6,7 @@
     <title>The Maze Challenge</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-    <style>
+    <!-- <style>
         body {
             font-family: 'Inter', sans-serif;
         }
@@ -18,10 +18,183 @@
         .player { background-color: #3b82f6; }
         .exit { background-color: #10b981; }
         .wall { background-color: #334155; }
-    </style>
+    </style> -->
+
+<style>
+  :root {
+    --bg1: #121213;
+    --bg2: #1a1a40;
+    --bg3: #0f2027;
+    --tile-border: #3a3a3c;
+    --correct: #538d4e;
+    --present: #b59f3b;
+    --absent: #3a3a3c;
+    --text: #ffffff;
+    --key-bg: #818384;
+    --key-text: #ffffff;
+  }
+
+  /* Animated gradient background */
+  body {
+    margin: 0;
+    color: var(--text);
+    font-family: Arial, Helvetica, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    justify-content: center;
+    /* background: linear-gradient(-45deg, #0f2027, #df7519, #ffa033, #a4a4ff); */
+    /* background: linear-gradient(135deg, #f3f4f6, #e5e7eb); */
+
+    /* background-size: 400% 400%;
+    animation: gradientMove 10s ease infinite; */
+     background-image: url('/bg2.png'); /* update path */
+  background-size: cover; /* make image fill the screen */
+  background-position: center; /* center the image */
+  background-repeat: no-repeat; /* prevent repeating */
+  }
+
+  @keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  #board {
+    display: grid;
+    grid-template-rows: repeat(6, 1fr);
+    gap: 5px;
+    margin-bottom: 30px;
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 5px;
+  }
+
+  .tile {
+    width: 60px;
+    height: 60px;
+    border: 2px solid var(--tile-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: var(--text);
+    transition: background-color 0.3s, transform 0.3s;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+  }
+
+  .correct { background-color: var(--correct); border-color: var(--correct); }
+  .present { background-color: var(--present); border-color: var(--present); }
+  .absent { background-color: var(--absent); border-color: var(--absent); }
+
+  #keyboard {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .key-row {
+    display: flex;
+    gap: 6px;
+  }
+
+  .key {
+    background-color: var(--key-bg);
+    color: var(--key-text);
+    border: none;
+    padding: 14px 10px;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    text-transform: uppercase;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+    transition: transform 0.1s ease;
+  }
+
+  .key:hover {
+    transform: scale(1.05);
+  }
+
+  .key.wide { width: 70px; }
+  .key:active { opacity: 0.7; }
+
+  @media (max-width: 600px) {
+    .tile { width: 48px; height: 48px; font-size: 1.5rem; }
+  }
+
+  #message {
+    position: fixed;
+    top: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: bold;
+    display: none;
+  }
+
+  #modal {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    visibility: hidden;
+  }
+
+  #modalContent {
+    background: #222;
+    padding: 20px 30px;
+    border-radius: 10px;
+    text-align: center;
+    color: white;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+  }
+
+  #modal a, #tryAgainBtn {
+    display: inline-block;
+    margin-top: 15px;
+    background-color: var(--correct);
+    color: white;
+    padding: 10px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+
+  #modal a:hover, #tryAgainBtn:hover {
+    transform: scale(1.05);
+  }
+
+  .logo img {
+    width: 30vw;
+    margin: 0 auto;
+    padding: 30px 0px;
+    filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));
+  }
+.top-logo{
+    width: 30vw;
+}
+
+
+  #tryAgainBtn { background-color: var(--present); }
+</style>
+
 </head>
 <body class="bg-slate-900 flex items-center justify-center min-h-screen p-4">
-
+<div class="logos"><img class="top-logo" src="./Taghash.png" alt=""></div>
     <div class="w-full max-w-lg mx-auto bg-white rounded-xl shadow-2xl p-6 md:p-8 text-center">
         
         <header class="mb-6">
@@ -61,7 +234,7 @@
     <script>
         // --- CONFIGURATION ---
         // Change this link to your desired final destination
-        const FINAL_LINK = "https://taghash.io/";
+        const FINAL_LINK = "https://docs.google.com/forms/d/e/1FAIpQLSfzUW0lIAfoSjTuCGXIacWlmmzNm5sIG5lhtBXcKnYy7RF5JQ/viewform?usp=header";
 
         // --- GAME LOGIC ---
         const canvas = document.getElementById('mazeCanvas');
@@ -270,4 +443,3 @@
     </script>
 </body>
 </html>
-
